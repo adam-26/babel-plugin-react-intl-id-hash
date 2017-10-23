@@ -25,6 +25,7 @@ jobs:
           name: Maybe Deploy
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
               git config -l
               git config user.email ci@circleci
               git config user.name CircleCI
