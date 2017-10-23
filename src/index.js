@@ -74,6 +74,11 @@ const isValidate = (path: Object, state: State): boolean => {
   return true
 }
 
+const isIdProp = prop => {
+  const path = prop.get('key')
+  return (path.isStringLiteral() ? path.node.value : path.node.name) !== 'id'
+}
+
 const replaceProperties = (properties: Object[], state: State) => {
   const { idHash = 'murmur3' } = state.opts
 
@@ -85,7 +90,7 @@ const replaceProperties = (properties: Object[], state: State) => {
       const objProps = objProp.get('properties')
 
       // { id: 'already has id', defaultMessage: 'hello' }
-      const notHasId = objProps.every(v => v.get('key').node.name !== 'id')
+      const notHasId = objProps.every(v => isIdProp(v))
       if (notHasId) {
         continue // eslint-disable-line
       }
@@ -95,9 +100,7 @@ const replaceProperties = (properties: Object[], state: State) => {
       objProp.replaceWith(
         t.objectExpression([
           t.objectProperty(t.stringLiteral('id'), t.stringLiteral(id)),
-          ...objProps
-            .filter(v => v.get('key').node.name !== 'id')
-            .map(v => v.node),
+          ...objProps.filter(v => isIdProp(v)).map(v => v.node),
         ])
       )
     }
