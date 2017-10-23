@@ -36,7 +36,6 @@
     "murmurhash-js": "^1.0.0"
   },
   "devDependencies": {
-    "all-contributors-cli": "^4.5.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
