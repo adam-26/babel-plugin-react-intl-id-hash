@@ -33,30 +33,6 @@ import { defineMessages } from 'react-intl'
 
 export default defineMessages({
   new: {
-    defaultMessage: 'missing id',
-    description: 'should not fail when id is missing'
-  }
-})
-
-      ↓ ↓ ↓ ↓ ↓ ↓
-
-import { defineMessages } from 'react-intl';
-
-export default defineMessages({
-  new: {
-    defaultMessage: 'missing id',
-    description: 'should not fail when id is missing'
-  }
-});
-"
-`;
-
-exports[`basic 3`] = `
-"
-import { defineMessages } from 'react-intl'
-
-export default defineMessages({
-  new: {
     id: 'App.Components.Greeting.hello',
     defaultMessage: 'id',
     description: 'describe text for translation'
@@ -78,7 +54,7 @@ export default defineMessages({
 "
 `;
 
-exports[`basic 4`] = `
+exports[`missingId 1`] = `
 "
 import { defineMessages } from 'react-intl'
 
@@ -97,6 +73,84 @@ export default defineMessages({
   new: {
     defaultMessage: 'missing id',
     description: 'should not fail when id is missing'
+  }
+});
+"
+`;
+
+exports[`missingId 2`] = `
+"
+import { defineMessages } from 'react-intl'
+
+export default defineMessages({
+  new: {
+    defaultMessage: 'missing id',
+    description: 'should not fail when id is missing'
+  }
+})
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { defineMessages } from 'react-intl';
+
+export default defineMessages({
+  new: {
+    defaultMessage: 'missing id',
+    description: 'should not fail when id is missing'
+  }
+});
+"
+`;
+
+exports[`stringId 1`] = `
+"
+import { defineMessages } from 'react-intl'
+
+export default defineMessages({
+  new: {
+    \\"id\\": \\"App.Components.Greeting.hello\\",
+    \\"defaultMessage\\": \\"id\\",
+    \\"description\\": \\"describe text for translation\\"
+  }
+})
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { defineMessages } from 'react-intl';
+
+export default defineMessages({
+  new: {
+    \\"id\\": \\"GSplhw==\\",
+
+    \\"defaultMessage\\": \\"id\\",
+    \\"description\\": \\"describe text for translation\\"
+  }
+});
+"
+`;
+
+exports[`stringId 2`] = `
+"
+import { defineMessages } from 'react-intl'
+
+export default defineMessages({
+  new: {
+    \\"id\\": \\"App.Components.Greeting.hello\\",
+    \\"defaultMessage\\": \\"id\\",
+    \\"description\\": \\"describe text for translation\\"
+  }
+})
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { defineMessages } from 'react-intl';
+
+export default defineMessages({
+  new: {
+    \\"id\\": \\"GSplhw==\\",
+
+    \\"defaultMessage\\": \\"id\\",
+    \\"description\\": \\"describe text for translation\\"
   }
 });
 "

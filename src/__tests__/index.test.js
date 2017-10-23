@@ -27,7 +27,7 @@ export default defineMessages({
 }
 
 const missingIdTest = {
-  title: 'basic',
+  title: 'missingId',
   code: `
 import { defineMessages } from 'react-intl'
 
@@ -35,6 +35,21 @@ export default defineMessages({
   new: {
     defaultMessage: 'missing id',
     description: 'should not fail when id is missing'
+  }
+})
+`,
+}
+
+const stringIdTest = {
+  title: 'stringId',
+  code: `
+import { defineMessages } from 'react-intl'
+
+export default defineMessages({
+  new: {
+    "id": "App.Components.Greeting.hello",
+    "defaultMessage": "id",
+    "description": "describe text for translation"
   }
 })
 `,
@@ -55,12 +70,12 @@ function pTest(opts: Object) {
 
 pTest({
   title: 'default',
-  tests: [standardTest, missingIdTest],
+  tests: [standardTest, missingIdTest, stringIdTest],
   pluginOptions: {},
 })
 
 pTest({
-  title: 'default',
-  tests: [standardTest, missingIdTest],
+  title: 'murmur3 hash',
+  tests: [standardTest, missingIdTest, stringIdTest],
   pluginOptions: { idHash: 'murmur3' },
 })
