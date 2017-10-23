@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/idhash-repo
     docker:
-      - image: circleci/node:6.11.1
+      - image: circleci/node:6.11
     steps:
       - checkout
       - run:
@@ -11,9 +11,6 @@ jobs:
           command: 'sudo npm install -g npm@latest'
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: install pkgs to prevent circleci build error
-          command: npm i process-nextick-args util-deprecate
       - run:
           name: install-npm-wee
           command: npm install
