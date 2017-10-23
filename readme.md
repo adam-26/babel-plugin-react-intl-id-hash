@@ -62,6 +62,24 @@ $ yarn add --dev babel-plugin-react-intl-id-hash
 }
 ```
 
+This can be used with the [babel-plugin-react-intl](https://github.com/yahoo/babel-plugin-react-intl).
+
+Another good alternative is [babel-plugin-react-intl-auto](https://github.com/akameco/babel-plugin-react-intl-auto), which **must run before** this plugin.
+
+.bablerc
+
+```json
+{
+  "plugins": [
+    ["react-intl-auto", {
+      "removePrefix": true,
+      "includeExportName": true
+    }],
+    "react-intl-id-hash"
+  ]
+}
+```
+
 ### Options
 
 #### idHash

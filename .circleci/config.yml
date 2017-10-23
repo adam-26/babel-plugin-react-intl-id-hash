@@ -12,6 +12,9 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
+          name: install pkgs to prevent circleci build error
+          command: npm i process-nextick-args util-deprecate
+      - run:
           name: install-npm-wee
           command: npm install
       - save_cache:
