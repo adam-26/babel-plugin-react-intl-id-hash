@@ -1,65 +1,24 @@
 {
-  "name": "babel-plugin-react-intl-auto",
-  "version": "0.11.0",
-  "main": "lib/index.js",
-  "description": "i18n for the component age. Auto management react-intl ID",
-  "license": "MIT",
-  "repository": "akameco/babel-plugin-react-intl-auto",
-  "author": {
-    "name": "akameco",
-    "email": "akameco.t@gmail.com",
-    "url": "akameco.github.io"
-  },
+  "name": "babel-plugin-react-intl-id-hash",
+  "version": "1.0.0",
+  "description": "Short consistent hash values for react-intl id's",
+  "main": "index.js",
   "scripts": {
-    "add-contributor": "add-contributor add",
-    "precommit": "lint-staged",
-    "build": "babel src -d lib --ignore __tests__,__fixtures__",
-    "prepare": "npm run build",
-    "flow": "flow",
-    "fmt": "prettier --write '{src/**/*.js,*.json}'",
-    "lint": "eslint src/index.js",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "validate": "npm run lint && npm run flow && npm run test"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "lint-staged": {
-    "src/**/*.js": ["fmt", "validate", "git add"],
-    "*.json": ["fmt", "git add"]
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adam-26/babel-plugin-react-intl-id-hash.git"
   },
   "keywords": [
-    "react",
-    "react-components",
     "react-intl",
-    "i18n",
-    "react-intl-auto",
-    "babel-plugin",
-    "auto",
-    "babel",
-    "plugin",
-    "generate",
-    "defineMessages"
+    "id",
+    "hash"
   ],
-  "files": ["lib"],
-  "dependencies": {
-    "babel-types": "^6.26.0"
+  "author": "adam-26",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adam-26/babel-plugin-react-intl-id-hash/issues"
   },
-  "devDependencies": {
-    "all-contributors-cli": "^4.5.1",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.0.1",
-    "babel-jest": "^21.2.0",
-    "babel-plugin-tester": "^4.0.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-flow": "^6.23.0",
-    "babel-register": "^6.26.0",
-    "eslint": "^4.9.0",
-    "eslint-config-precure": "^0.11.1",
-    "flow-bin": "^0.57.3",
-    "husky": "^0.14.3",
-    "jest": "^21.2.1",
-    "lint-staged": "^4.3.0",
-    "prettier": "^1.7.4",
-    "slash": "^1.0.0"
-  }
+  "homepage": "https://github.com/adam-26/babel-plugin-react-intl-id-hash#readme"
 }
