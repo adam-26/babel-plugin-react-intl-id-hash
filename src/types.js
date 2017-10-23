@@ -15,8 +15,6 @@ type File = {
 export type State = {
   file: File,
   opts: {
-    removePrefix?: string,
-    filebase?: boolean,
-    includeExportName?: boolean | 'all',
+    idHash?: string,
   },
 }

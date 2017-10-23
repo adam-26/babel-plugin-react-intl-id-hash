@@ -1,6 +1,6 @@
 // @flow
-import p from 'path'
 import * as t from 'babel-types'
+import murmurhashJs from 'murmurhash-js'
 import type { State } from './types'
 
 const PKG_NAME = 'react-intl'
@@ -19,32 +19,19 @@ const isImportLocalName = (name: string, { file }: State) => {
   return false
 }
 
-const REG = new RegExp(`\\${p.sep}`, 'g')
-
-const dotPath = (str: string) => str.replace(REG, '.')
-
-const getPrefix = (
-  {
-    file: { opts: { filename } },
-    opts: { removePrefix = '', filebase = false },
-  }: State,
-  exportName: string | null
-) => {
-  if (removePrefix === true) {
-    return exportName === null ? '' : exportName
-  }
-  const file = p.relative(process.cwd(), filename)
-  const fomatted = filebase ? file.replace(/\..+$/, '') : p.dirname(file)
-  removePrefix = removePrefix === false ? '' : removePrefix
-  const fixed = dotPath(fomatted).replace(
-    new RegExp(`^${removePrefix.replace(/\//g, '')}\\${dotPath(p.sep)}?`),
-    ''
-  )
-  const result = exportName === null ? fixed : `${fixed}.${exportName}`
-  return result
+// https://stackoverflow.com/questions/15761790/convert-a-32bit-integer-into-4-bytes-of-data-in-javascript
+function toBytesInt32(num) {
+  const arr = new ArrayBuffer(4)
+  const view = new DataView(arr)
+  view.setUint32(0, num, false)
+  return arr
 }
 
-const getId = (path, prefix) => {
+function murmur3Hash(id) {
+  return Buffer.from(toBytesInt32(murmurhashJs(id))).toString('base64')
+}
+
+const getId = (path, hashName) => {
   let name
 
   if (path.isStringLiteral()) {
@@ -57,10 +44,13 @@ const getId = (path, prefix) => {
     throw new Error(`requires Object key or string literal`)
   }
 
-  return dotPath(p.join(prefix, name))
+  switch (hashName) {
+    case 'murmur3':
+      return murmur3Hash(name)
+    default:
+      throw new Error(`unsupported idHash '${hashName}'`)
+  }
 }
-
-const isLiteral = node => t.isStringLiteral(node) || t.isTemplateLiteral(node)
 
 const isValidate = (path: Object, state: State): boolean => {
   const callee = path.get('callee')
@@ -84,12 +74,8 @@ const isValidate = (path: Object, state: State): boolean => {
   return true
 }
 
-const replaceProperties = (
-  properties: Object[],
-  state,
-  exportName: string | null
-) => {
-  const prefix = getPrefix(state, exportName)
+const replaceProperties = (properties: Object[], state: State) => {
+  const { idHash = 'murmur3' } = state.opts
 
   for (const prop of properties) {
     const objProp = prop.get('value')
@@ -99,76 +85,34 @@ const replaceProperties = (
       const objProps = objProp.get('properties')
 
       // { id: 'already has id', defaultMessage: 'hello' }
-      const isNotHaveId = objProps.every(v => v.get('key').node.name !== 'id')
-      if (!isNotHaveId) {
+      const notHasId = objProps.every(v => v.get('key').node.name !== 'id')
+      if (notHasId) {
         continue // eslint-disable-line
       }
 
-      const id = getId(prop.get('key'), prefix)
+      const id = getId(prop.get('key'), idHash)
 
       objProp.replaceWith(
         t.objectExpression([
           t.objectProperty(t.stringLiteral('id'), t.stringLiteral(id)),
-          ...objProps.map(v => v.node),
-        ])
-      )
-
-      // 'hello' or `hello ${user}`
-    } else if (isLiteral(objProp)) {
-      const id = getId(prop.get('key'), prefix)
-
-      objProp.replaceWith(
-        t.objectExpression([
-          t.objectProperty(t.stringLiteral('id'), t.stringLiteral(id)),
-          t.objectProperty(t.stringLiteral('defaultMessage'), objProp.node),
+          ...objProps
+            .filter(v => v.get('key').node.name !== 'id')
+            .map(v => v.node),
         ])
       )
     }
   }
 }
 
-const getExportName = (
-  namedExport,
-  defaultExport,
-  includeExportName
-): string | null => {
-  if (includeExportName && namedExport) {
-    return namedExport
-      .get('declaration')
-      .get('declarations')[0]
-      .get('id')
-      .get('name').node
-  }
-
-  if (includeExportName === 'all' && defaultExport) {
-    return 'default'
-  }
-
-  return null
-}
-
 export default function() {
   return {
-    name: 'react-intl-auto',
+    name: 'react-intl-id-hash',
     visitor: {
       CallExpression(path: Object, state: State) {
         if (!isValidate(path, state)) {
           return
         }
-
-        // eslint-disable-next-line
-        const namedExport = path.findParent(p => p.isExportNamedDeclaration())
-        // eslint-disable-next-line
-        const defaultExport = path.findParent(p =>
-          p.isExportDefaultDeclaration()
-        )
-        const exportName = getExportName(
-          namedExport,
-          defaultExport,
-          state.opts.includeExportName || false
-        )
         const messagesObj = path.get('arguments')[0]
-
         let properties
 
         if (messagesObj.isObjectExpression()) {
@@ -183,7 +127,7 @@ export default function() {
         }
 
         if (properties) {
-          replaceProperties(properties, state, exportName)
+          replaceProperties(properties, state)
         }
       },
     },

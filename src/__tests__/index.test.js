@@ -11,108 +11,34 @@ const filename = path.resolve(
   'messages.js'
 )
 
-const basicTest = {
+const standardTest = {
   title: 'basic',
   code: `
 import { defineMessages } from 'react-intl'
 
 export default defineMessages({
-  hello: 'hello',
-  world: 'hello world',
+  new: {
+    id: 'App.Components.Greeting.hello',
+    defaultMessage: 'id',
+    description: 'describe text for translation'
+  }
 })
 `,
 }
 
-const multiExportTest = {
-  title: 'multi export',
+const missingIdTest = {
+  title: 'basic',
   code: `
 import { defineMessages } from 'react-intl'
 
-export const extra = defineMessages({
-  hello: 'hello extra',
-  world: 'hello world extra',
-})
-
 export default defineMessages({
-  hello: 'hello',
-  world: 'hello world',
+  new: {
+    defaultMessage: 'missing id',
+    description: 'should not fail when id is missing'
+  }
 })
 `,
 }
-
-const tests = [
-  basicTest,
-  {
-    title: 'with include value',
-    code: `
-import { defineMessages } from 'react-intl'
-
-defineMessages({
-  hello: 'hello',
-  world: \`hello world \${1}\`,
-})
-      `,
-  },
-  {
-    title: 'string literal',
-    code: `
-import { defineMessages } from 'react-intl'
-
-defineMessages({
-  'hello': 'hello',
-  'world': 'hello world',
-})
-      `,
-  },
-  {
-    title: 'Object',
-    code: `
-import { defineMessages } from 'react-intl'
-
-defineMessages({
-  new: {
-    id: 'this is id',
-    defaultMessage: 'id',
-  },
-  world: {
-    defaultMessage: 'world',
-  },
-  headerTitle: {
-    defaultMessage: 'Welcome to dashboard {name}!',
-    description: 'Message to greet the user.',
-  },
-})
-      `,
-  },
-  {
-    title: 'import as',
-    code: `
-import { defineMessages as m } from 'react-intl'
-
-m({
-  hello: 'hello',
-  world: 'hello world',
-})
-
-`,
-  },
-  {
-    title: 'with other func',
-    code: `
-import { defineMessages } from 'react-intl'
-
-defineMessages({
-  hello: 'hello',
-  world: \`hello world \${1}\`,
-})
-
-hello({
-  id: 'hoge',
-})
-    `,
-  },
-  multiExportTest,
-]
 
 function pTest(opts: Object) {
   pluginTester(
@@ -127,52 +53,14 @@ function pTest(opts: Object) {
   )
 }
 
-pTest({ tests })
-
 pTest({
-  title: 'removePrefix = "src"',
-  tests,
-  pluginOptions: { removePrefix: 'src' },
+  title: 'default',
+  tests: [standardTest, missingIdTest],
+  pluginOptions: {},
 })
 
 pTest({
-  title: 'removePrefix = "src/" -- with slash',
-  tests,
-  pluginOptions: { removePrefix: 'src/' },
-})
-
-pTest({
-  title: 'filebase = true',
-  tests,
-  pluginOptions: { filebase: true },
-})
-
-pTest({
-  title: 'includeExportName = true',
-  tests: [basicTest, multiExportTest],
-  pluginOptions: { includeExportName: true },
-})
-
-pTest({
-  title: 'includeExportName = all',
-  tests: [basicTest, multiExportTest],
-  pluginOptions: { includeExportName: 'all' },
-})
-
-pTest({
-  title: 'removePrefix = true, includeExportName = true',
-  tests: [basicTest, multiExportTest],
-  pluginOptions: { removePrefix: true, includeExportName: true },
-})
-
-pTest({
-  title: 'removePrefix = false',
-  tests: [basicTest, multiExportTest],
-  pluginOptions: { removePrefix: false },
-})
-
-pTest({
-  title: 'removePrefix = true, includeExportName = all',
-  tests: [basicTest, multiExportTest],
-  pluginOptions: { removePrefix: true, includeExportName: 'all' },
+  title: 'default',
+  tests: [standardTest, missingIdTest],
+  pluginOptions: { idHash: 'murmur3' },
 })

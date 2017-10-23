@@ -1,0 +1,37 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/idhash-repo
+    docker:
+      - image: circleci/node:6.11.1
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: install-npm-wee
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: test
+          command: npm run validate
+      - deploy:
+          name: Maybe Deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              git config -l
+              git config user.email ci@circleci
+              git config user.name CircleCI
+              # Build for release
+              npm run build
+              # Tag the release, update package.json version and changelog, commit and push to github.
+              ./node_modules/.bin/standard-version --no-verify -m "chore(release): %s. [skip ci]"
+              git push --follow-tags origin master
+              npm publish
+            fi
