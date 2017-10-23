@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.3"></a>
+## [1.1.3](https://github.com/adam-26/babel-plugin-react-intl-id-hash/compare/v1.1.1...v1.1.3) (2017-10-23)
+
+
+### Bug Fixes
+
+* deployment ([314d126](https://github.com/adam-26/babel-plugin-react-intl-id-hash/commit/314d126))
+
+
+
 <a name="1.1.1"></a>
 ## [1.1.1](https://github.com/adam-26/babel-plugin-react-intl-id-hash/compare/v1.1.0...v1.1.1) (2017-10-23)
 
