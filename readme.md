@@ -89,7 +89,7 @@ The name of the hash to be used for generating id values
 Type: `string` <br>
 Default: `murmur3`
 
-currently, only `murmur3` is supported
+> currently, only `murmur3` is supported
 
 ## License
 
