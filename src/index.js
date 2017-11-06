@@ -1,7 +1,7 @@
 // @flow
 import * as t from 'babel-types'
-import murmurhashJs from 'murmurhash-js'
 import type { State } from './types'
+import murmur3Hash from './murmurHash'
 
 const PKG_NAME = 'react-intl'
 const FUNC_NAME = 'defineMessages'
@@ -19,40 +19,43 @@ const isImportLocalName = (name: string, { file }: State) => {
   return false
 }
 
-// https://stackoverflow.com/questions/15761790/convert-a-32bit-integer-into-4-bytes-of-data-in-javascript
-function toBytesInt32(num) {
-  const arr = new ArrayBuffer(4)
-  const view = new DataView(arr)
-  view.setUint32(0, num, false)
-  return arr
+const isIdProp = prop => {
+  const path = prop.get('key')
+  return (path.isStringLiteral() ? path.node.value : path.node.name) === 'id'
 }
 
-function murmur3Hash(id) {
-  return Buffer.from(toBytesInt32(murmurhashJs(id))).toString('base64')
+const getMessageId = objectProperty => {
+  if (!objectProperty.isObjectExpression()) {
+    return
+  }
+
+  const objProps = objectProperty.get('properties')
+  for (let i = 0, len = objProps.length; i < len; i++) {
+    objectProperty = objProps[i]
+
+    if (isIdProp(objectProperty)) {
+      const propValue = objectProperty.get('value')
+      if (propValue.isStringLiteral()) {
+        // eslint-disable-next-line consistent-return
+        return propValue.node.value
+      }
+
+      // if id is not a string value, nothing can be done
+      break
+    }
+  }
 }
 
-const getId = (path, hashName) => {
-  let name
-
-  if (path.isStringLiteral()) {
-    name = path.node.value
-  } else if (path.isIdentifier()) {
-    name = path.node.name
-  }
-
-  if (!name) {
-    throw new Error(`requires Object key or string literal`)
-  }
-
+const createIdHash = (id, hashName) => {
   switch (hashName) {
     case 'murmur3':
-      return murmur3Hash(name)
+      return murmur3Hash(id)
     default:
       throw new Error(`unsupported idHash '${hashName}'`)
   }
 }
 
-const isValidate = (path: Object, state: State): boolean => {
+const isReactIntlImport = (path: Object, state: State): boolean => {
   const callee = path.get('callee')
   if (!callee.isIdentifier()) {
     return false
@@ -74,11 +77,6 @@ const isValidate = (path: Object, state: State): boolean => {
   return true
 }
 
-const isIdProp = prop => {
-  const path = prop.get('key')
-  return (path.isStringLiteral() ? path.node.value : path.node.name) !== 'id'
-}
-
 const replaceProperties = (properties: Object[], state: State) => {
   const { idHash = 'murmur3' } = state.opts
 
@@ -87,20 +85,22 @@ const replaceProperties = (properties: Object[], state: State) => {
 
     // { defaultMessage: 'hello', description: 'this is hello' }
     if (objProp.isObjectExpression()) {
-      const objProps = objProp.get('properties')
-
-      // { id: 'already has id', defaultMessage: 'hello' }
-      const notHasId = objProps.every(v => isIdProp(v))
-      if (notHasId) {
-        continue // eslint-disable-line
+      const messageId = getMessageId(objProp)
+      if (typeof messageId === 'undefined') {
+        // these is no valid messageId value to hash
+        // eslint-disable-next-line no-continue
+        continue
       }
 
-      const id = getId(prop.get('key'), idHash)
+      const id = createIdHash(messageId, idHash)
 
       objProp.replaceWith(
         t.objectExpression([
           t.objectProperty(t.stringLiteral('id'), t.stringLiteral(id)),
-          ...objProps.filter(v => isIdProp(v)).map(v => v.node),
+          ...objProp
+            .get('properties')
+            .filter(v => !isIdProp(v))
+            .map(v => v.node),
         ])
       )
     }
@@ -112,7 +112,7 @@ export default function() {
     name: 'react-intl-id-hash',
     visitor: {
       CallExpression(path: Object, state: State) {
-        if (!isValidate(path, state)) {
+        if (!isReactIntlImport(path, state)) {
           return
         }
         const messagesObj = path.get('arguments')[0]
