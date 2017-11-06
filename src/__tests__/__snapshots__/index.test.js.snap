@@ -18,7 +18,7 @@ import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   new: {
-    'id': 'GSplhw==',
+    'id': 'kN4IPA==',
 
     defaultMessage: 'id',
     description: 'describe text for translation'
@@ -45,7 +45,7 @@ import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   new: {
-    'id': 'GSplhw==',
+    'id': 'kN4IPA==',
 
     defaultMessage: 'id',
     description: 'describe text for translation'
@@ -120,7 +120,7 @@ import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   new: {
-    \\"id\\": \\"GSplhw==\\",
+    \\"id\\": \\"kN4IPA==\\",
 
     \\"defaultMessage\\": \\"id\\",
     \\"description\\": \\"describe text for translation\\"
@@ -147,7 +147,7 @@ import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   new: {
-    \\"id\\": \\"GSplhw==\\",
+    \\"id\\": \\"kN4IPA==\\",
 
     \\"defaultMessage\\": \\"id\\",
     \\"description\\": \\"describe text for translation\\"
