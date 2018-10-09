@@ -3,20 +3,33 @@ import * as t from 'babel-types'
 import type { State } from './types'
 import murmur3Hash from './murmurHash'
 
-const PKG_NAME = 'react-intl'
-const FUNC_NAME = 'defineMessages'
+const isImportLocalName = (
+  name: string,
+  allowedNames: $ReadOnlyArray<string>,
+  { file }: State
+) => {
+  const isSearchedImportSpecifier = specifier =>
+    specifier.isImportSpecifier() &&
+    allowedNames.includes(specifier.node.imported.name) &&
+    specifier.node.local.name === name
 
-const isImportLocalName = (name: string, { file }: State) => {
-  const imports = file.metadata.modules.imports
-  const intlImports = imports.find(x => x.source === PKG_NAME)
-  if (intlImports) {
-    const specifier = intlImports.specifiers.find(x => x.imported === FUNC_NAME)
-    if (specifier) {
-      return specifier.local === name
-    }
-  }
+  let isImported = false
 
-  return false
+  file.path.traverse({
+    ImportDeclaration: {
+      exit(path) {
+        isImported =
+          path.node.source.value === 'react-intl' &&
+          path.get('specifiers').some(isSearchedImportSpecifier)
+
+        if (isImported) {
+          path.stop()
+        }
+      },
+    },
+  })
+
+  return isImported
 }
 
 const isIdProp = prop => {
@@ -61,7 +74,7 @@ const isReactIntlImport = (path: Object, state: State): boolean => {
     return false
   }
 
-  if (!isImportLocalName(callee.node.name, state)) {
+  if (!isImportLocalName(callee.node.name, ['defineMessages'], state)) {
     return false
   }
 
