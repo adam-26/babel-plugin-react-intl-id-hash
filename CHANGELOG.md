@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/adam-26/babel-plugin-react-intl-id-hash/compare/v1.1.5...v2.0.0) (2018-10-09)
+
+
+### Bug Fixes
+
+* **build:** Fix lint error ([7d426d8](https://github.com/adam-26/babel-plugin-react-intl-id-hash/commit/7d426d8))
+* **build:** Remove flow step ([416e95e](https://github.com/adam-26/babel-plugin-react-intl-id-hash/commit/416e95e))
+* **build:** Resolve lint error ([5992031](https://github.com/adam-26/babel-plugin-react-intl-id-hash/commit/5992031))
+
+
+### Features
+
+* **babel:** Add support for babel version 7 ([70de7ca](https://github.com/adam-26/babel-plugin-react-intl-id-hash/commit/70de7ca))
+
+
+### BREAKING CHANGES
+
+* **babel:** Publish a new major version for babel 7 compatibility.
+
+
+
 <a name="1.1.5"></a>
 ## [1.1.5](https://github.com/adam-26/babel-plugin-react-intl-id-hash/compare/v1.1.4...v1.1.5) (2017-11-06)
 
