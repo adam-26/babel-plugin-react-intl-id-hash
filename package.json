@@ -13,7 +13,7 @@
     "pretest": "npm run lint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "validate": "npm run lint && npm run flow && npm run test"
+    "validate": "npm run lint && npm run test"
   },
   "lint-staged": {
     "src/**/*.js": [
