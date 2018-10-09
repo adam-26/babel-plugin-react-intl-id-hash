@@ -5,7 +5,7 @@ import murmur3Hash from './murmurHash'
 
 const isImportLocalName = (
   name: string,
-  allowedNames: $ReadOnlyArray<string>,
+  allowedNames: Array<string>,
   { file }: State
 ) => {
   const isSearchedImportSpecifier = specifier =>
